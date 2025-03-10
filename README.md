@@ -14,7 +14,8 @@ This project contains three different apps that work together to give you real-t
    GET /api/currency/currencies: Get a list of available currencies.
    GET /api/currency/exchangeHistory: Get historical exchange rates between two currencies.
    Additionally, the API includes a chart to visually represent exchange rate changes for two currencies over a selected period. To support this, the project fetches data for the past 7 days and stores it in memory for quick access, allowing the chart to display the historical exchange rate changes.
-
+**Swagger Documentation**
+Swagger has been integrated into the Web API for easy exploration of the available endpoints. When you run the project, you can access the Swagger UI at http://localhost:5000/swagger
 
 ---
 
