@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35728.132
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyExchangeWebAPI", "RivertyTasks\CurrencyExchangeWebAPI.csproj", "{6AA72A6C-ABE7-42FE-9548-7F59901FCC27}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyExchangeWebAPI", "CurrencyExchangeWebAPI\CurrencyExchangeWebAPI.csproj", "{6AA72A6C-ABE7-42FE-9548-7F59901FCC27}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleAppCurrencyConverter", "ConsoleAppCurrencyConverter\ConsoleAppCurrencyConverter.csproj", "{AE2C5577-3BF3-4520-B980-0034FF8FC8B8}"
 EndProject
