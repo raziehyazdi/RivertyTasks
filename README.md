@@ -6,13 +6,15 @@ This project contains three different apps that work together to give you real-t
    This is a console app where you can convert currencies. You enter an amount and choose the currencies you want to convert between, and the app will show you the converted value based on live exchange rates.
 
 2. **CurrencyExchangeHistory**  
-   This project stores and fetches past exchange rates. Want to know how the exchange rate between two currencies looked like last month? This app will fetch that data for you!
+   The CurrencyExchangeHistory project fetches and stores daily exchange rates using an in-memory database for fast data retrieval. This approach eliminates the need for an external database, simplifying the setup and enhancing performance. It is designed to be run as a scheduled job, which will be configured in Azure to regularly update exchange rates.
 
-3. **CurrencyExchangeWebAPI**  
-   A Web API that lets you interact with the currency conversion and exchange history features over HTTP. This project exposes a bunch of useful endpoints, like:
-   - **GET /api/currency/convert:** Convert one currency to another.
-   - **GET /api/currency/currencies:** Get a list of available currencies.
-   - **GET /api/currency/exchangeHistory:** Get historical exchange rates between two currencies.
+4. **CurrencyExchangeWebAPI**  
+   The CurrencyExchangeWebAPI project provides a Web API that allows interaction with currency conversion and exchange history features. It exposes useful endpoints such as:
+   GET /api/currency/convert: Convert one currency to another.
+   GET /api/currency/currencies: Get a list of available currencies.
+   GET /api/currency/exchangeHistory: Get historical exchange rates between two currencies.
+   Additionally, the API includes a chart to visually represent exchange rate changes for two currencies over a selected period. To support this, the project fetches data for the past 7 days and stores it in memory for quick access, allowing the chart to display the historical exchange rate changes.
+
 
 ---
 
