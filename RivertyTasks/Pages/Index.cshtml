@@ -1,0 +1,143 @@
+﻿@page
+@model RivertyTasks.Pages.IndexModel
+
+<div style="max-width: 600px; margin: auto; padding: 20px; text-align: center;">
+    <h1>Currency Exchange</h1>
+
+    <div style="margin-bottom: 15px;">
+        <input id="fromCurrencyAmount" type="text" placeholder="Type amount" value="1" style="width: 150px; margin: 5px;" />
+        <select id="fromCurrencyDropdown" style="width: 150px; margin: 5px;">
+            <option value="">Loading...</option>
+        </select>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <input id="toCurrencyAmount" type="text" placeholder="Converted amount" value="1" readonly style="width: 150px; margin: 5px;" />
+        <select id="toCurrencyDropdown" style="width: 150px; margin: 5px;">
+            <option value="">Loading...</option>
+        </select>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <input id="exchangeDate" type="date" style="margin: 5px;" />
+        <input id="exchangeDateEnd" type="date" style="margin: 5px;" />
+    </div>
+
+    <div style="margin: 20px;">
+        <canvas id="exchangeRateChart" width="400" height="200"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+<script>
+    async function loadCurrencies() {
+        try {
+            let response = await fetch('/api/currency/currencies');
+            let data = await response.json();
+
+            let dropdowns = [
+                document.getElementById('fromCurrencyDropdown'),
+                document.getElementById('toCurrencyDropdown'),
+            ];
+
+            dropdowns.forEach(dropdown => dropdown.innerHTML = "");
+
+            data.forEach(code => {
+                dropdowns.forEach(dropdown => {
+                    let option = document.createElement("option");
+                    option.value = code;
+                    option.textContent = code;
+                    dropdown.appendChild(option);
+                });
+            });
+        } catch (error) {
+            console.error("Error fetching currencies:", error);
+        }
+    }
+
+    async function convertCurrency() {
+        let amount = document.getElementById('fromCurrencyAmount').value;
+        let fromCurrency = document.getElementById('fromCurrencyDropdown').value;
+        let toCurrency = document.getElementById('toCurrencyDropdown').value;
+        let selectedDate = document.getElementById("exchangeDate").value;
+        let selectedEndDate = document.getElementById("exchangeDateEnd").value;
+
+        if (!amount || isNaN(amount) || amount <= 0) return;
+
+        try {
+            let response = await fetch(`/api/currency/convert?from=${fromCurrency}&to=${toCurrency}&amount=${amount}&date=${selectedDate}`);
+            let data = await response.json();
+            document.getElementById('toCurrencyAmount').value = data.convertedAmount;
+
+            let responseChart = await fetch(`/api/currency/exchangeHistory?baseCurrency=${fromCurrency}&targetCurrency=${toCurrency}&startDate=${selectedDate}&endDate=${selectedEndDate}`);
+            let dataChart = await responseChart.json();
+
+            const labels = dataChart.map(rate => new Date(rate.exchangeDate));
+            const rates = dataChart.map(rate => rate.exchangeRateValue);
+            createChart(labels, rates);
+        } catch (error) {
+            console.error("Error converting currency:", error);
+        }
+    }
+
+    let chartInstance;
+
+    function createChart(labels, rates) {
+        const ctx = document.getElementById('exchangeRateChart').getContext('2d');
+        console.log('Chart data:', labels, rates);
+
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels.map(date => new Date(date)),
+                datasets: [{
+                    label: 'Exchange Rate',
+                    data: rates,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            tooltipFormat: 'yyyy-MM-dd',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Exchange Rate'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let today = new Date().toISOString().split('T')[0];
+        document.getElementById("exchangeDate").value = today;
+        document.getElementById("exchangeDateEnd").value = today;
+    });
+
+    document.getElementById('fromCurrencyAmount').addEventListener('input', convertCurrency);
+    document.getElementById('toCurrencyAmount').addEventListener('input', convertCurrency);
+    document.getElementById('exchangeDate').addEventListener('change', convertCurrency);
+
+    loadCurrencies();
+</script>
