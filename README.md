@@ -40,7 +40,7 @@ Open the `appsettings.json` in each project and add your Fixer API Key and Base 
 **Example `appsettings.json`:**
 ```json
 {
-    "FixerApiKey": "your-api-key-here",
+    "FixerApiKey": "api-key",
     "FixerBaseUrl": "http://data.fixer.io/api/"
 }
 ```
